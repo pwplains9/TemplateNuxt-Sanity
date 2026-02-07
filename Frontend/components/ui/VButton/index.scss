@@ -1,0 +1,89 @@
+.v-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: vc(8);
+  border: none;
+  border-radius: vc(8);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all $transition;
+  white-space: nowrap;
+  font-weight: 500;
+  font-family: $font-Poppins;
+
+  &:focus {
+    outline: none;
+  }
+
+  &--size-sm {
+    padding: vc(8) vc(16);
+    font-size: vc(14);
+    min-height: vc(36);
+  }
+
+  &--size-md {
+    padding: vc(12) vc(24);
+    font-size: vc(16);
+    min-height: vc(44);
+  }
+
+  &--size-lg {
+    padding: vc(16) vc(32);
+    font-size: vc(18);
+    min-height: vc(52);
+  }
+
+  &--variant-primary {
+    background: $color-primary;
+    color: $color-white;
+    &:hover:not(.v-button--disabled) {
+      opacity: 0.9;
+    }
+  }
+
+  &--variant-secondary {
+    background: $color-gray-200;
+    color: $color-black;
+    &:hover:not(.v-button--disabled) {
+      background: $color-gray-300;
+    }
+  }
+
+  &--variant-orange {
+    background: $color-orange;
+    color: $color-white;
+    &:hover:not(.v-button--disabled) {
+      opacity: 0.9;
+    }
+  }
+
+  &--variant-white {
+    background: $color-white;
+    color: $color-black;
+    border: 1px solid $color-border;
+  }
+
+  &--variant-outline {
+    background: transparent;
+    color: $color-primary;
+    border: 2px solid $color-primary;
+  }
+
+  &--variant-ghost {
+    background: $color-gray-100;
+    color: $color-black;
+    &:hover:not(.v-button--disabled) {
+      background: $color-gray-200;
+    }
+  }
+
+  &--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &--full-width {
+    width: 100%;
+  }
+}

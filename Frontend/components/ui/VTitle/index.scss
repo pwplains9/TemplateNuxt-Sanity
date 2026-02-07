@@ -1,0 +1,47 @@
+.v-title {
+  padding: 0;
+  line-height: 1.2;
+  font-family: $font-Poppins;
+
+  &--size-xs {
+    font-size: vc(14);
+  }
+  &--size-sm {
+    font-size: vc(18);
+  }
+  &--size-md {
+    font-size: vc(24);
+  }
+  &--size-lg {
+    font-size: vc(28);
+  }
+  &--size-xl {
+    font-size: vc(32);
+  }
+  &--size-xxl {
+    font-size: vc(40);
+  }
+
+  &--weight-normal {
+    font-weight: 400;
+  }
+  &--weight-medium {
+    font-weight: 500;
+  }
+  &--weight-semibold {
+    font-weight: 600;
+  }
+  &--weight-bold {
+    font-weight: 700;
+  }
+
+  &--align-left {
+    text-align: left;
+  }
+  &--align-center {
+    text-align: center;
+  }
+  &--align-right {
+    text-align: right;
+  }
+}

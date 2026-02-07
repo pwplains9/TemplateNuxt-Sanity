@@ -1,0 +1,35 @@
+:root {
+  --width-base: #{$desktop-md};
+  --width-current: #{$desktop-xxl * 1px};
+  --width-multiplier: var(--width-current) / var(--width-base);
+
+  @include desktop-xxl {
+    --width-current: 100vw;
+  }
+
+  @include devices {
+    --width-base: 375;
+    --width-current: 100vmin;
+  }
+}
+
+html {
+  width: 100%;
+}
+
+body {
+  width: 100%;
+  font-family: $font-Poppins;
+  color: $color-black;
+  -webkit-font-smoothing: antialiased;
+}
+
+main {
+  flex: 1;
+}
+
+.site-container {
+  max-width: vc(1200);
+  margin: 0 auto;
+  padding: 0 vc(20);
+}

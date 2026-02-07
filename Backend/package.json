@@ -1,0 +1,28 @@
+{
+  "name": "template-sanity-studio",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "sanity dev",
+    "start": "sanity start",
+    "build": "sanity build",
+    "deploy": "sanity deploy"
+  },
+  "dependencies": {
+    "@sanity/icons": "^3.5.3",
+    "@sanity/image-url": "^1.1.0",
+    "@sanity/vision": "^3.71.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "sanity": "^3.71.0",
+    "styled-components": "^6.1.13"
+  },
+  "devDependencies": {
+    "@sanity/client": "^7.14.0",
+    "@types/react": "^18.3.12",
+    "typescript": "^5.7.2"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

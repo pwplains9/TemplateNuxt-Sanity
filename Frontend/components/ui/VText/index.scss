@@ -1,0 +1,51 @@
+.v-text {
+  padding: 0;
+  font-family: $font-Poppins;
+
+  &--size-xs {
+    font-size: vc(12);
+  }
+  &--size-sm {
+    font-size: vc(14);
+  }
+  &--size-md {
+    font-size: vc(16);
+    line-height: 1.5;
+  }
+  &--size-lg {
+    font-size: vc(18);
+  }
+  &--size-xl {
+    font-size: vc(20);
+  }
+
+  &--weight-normal {
+    font-weight: 400;
+  }
+  &--weight-medium {
+    font-weight: 500;
+  }
+  &--weight-semibold {
+    font-weight: 600;
+  }
+  &--weight-bold {
+    font-weight: 700;
+  }
+
+  &--align-left {
+    text-align: left;
+  }
+  &--align-center {
+    text-align: center;
+  }
+  &--align-right {
+    text-align: right;
+  }
+
+  &--color-default {
+    color: $color-black;
+  }
+  &--color-muted {
+    color: $color-gray-600;
+  }
+}
