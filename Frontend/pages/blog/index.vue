@@ -9,10 +9,7 @@
           </VText>
         </header>
 
-        <div v-if="pending" class="blog-loading">
-          <div class="blog-loading__spinner" />
-          <p>Loading posts...</p>
-        </div>
+        <VLoadingSpinner v-if="pending" message="Loading posts..." />
 
         <div v-else-if="error" class="blog-error">
           <p>Error loading posts.</p>
@@ -52,32 +49,18 @@
 <script setup lang="ts">
 import VTitle from '~/components/ui/VTitle/VTitle.vue'
 import VText from '~/components/ui/VText/VText.vue'
-import type { SanityPost } from '~/types/sanity'
+import { getImageUrl } from '~/utils/sanity'
+import { formatDate } from '~/utils/date'
 
 const { posts, pending, error } = useSanityData()
 
 useSeoMeta({
   title: 'Blog',
   description: 'Blog — latest posts',
+  ogTitle: 'Blog',
+  ogDescription: 'Blog — latest posts',
+  twitterCard: 'summary_large_image',
 })
-
-function getImageUrl(post: SanityPost): string | null {
-  const img = post.mainImage
-  if (img?.asset?.url) return img.asset.url
-  if (img && 'url' in img && typeof (img as { url?: string }).url === 'string') {
-    return (img as { url: string }).url
-  }
-  return null
-}
-
-function formatDate(dateStr?: string) {
-  if (!dateStr) return ''
-  return new Date(dateStr).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  })
-}
 </script>
 
 <style scoped lang="scss">
@@ -153,27 +136,10 @@ function formatDate(dateStr?: string) {
   color: $color-gray-500;
 }
 
-.blog-loading,
 .blog-error,
 .blog-empty {
   text-align: center;
   padding: vc(60) vc(20);
   color: $color-gray-600;
-}
-
-.blog-loading__spinner {
-  width: vc(40);
-  height: vc(40);
-  border: vc(3) solid $color-gray-300;
-  border-top-color: $color-primary;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 0 auto vc(16);
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 </style>

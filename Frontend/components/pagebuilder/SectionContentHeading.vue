@@ -26,10 +26,4 @@ defineProps<{
 .content-block--heading {
   padding: vc(32) 0;
 }
-
-.container {
-  max-width: vc(1200);
-  margin: 0 auto;
-  padding: 0 vc(20);
-}
 </style>

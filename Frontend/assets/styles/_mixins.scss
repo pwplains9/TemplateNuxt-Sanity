@@ -1,3 +1,5 @@
+@use 'variables' as *;
+
 @mixin desktop-xxl {
   @media (max-width: ($desktop-xxl - 1px)) {
     @content;

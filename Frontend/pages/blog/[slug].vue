@@ -4,12 +4,9 @@
       <div class="container">
         <NuxtLink to="/blog" class="back-link">← Back to Blog</NuxtLink>
 
-        <article v-if="pending" class="loading">
-          <div class="loading__spinner" />
-          <p>Loading...</p>
-        </article>
+        <VLoadingSpinner v-if="pending" message="Loading..." />
 
-        <article v-else-if="error" class="error">
+        <article v-else-if="error" class="post-error">
           <p>Error loading post</p>
         </article>
 
@@ -34,10 +31,7 @@
           </div>
         </article>
 
-        <article v-else class="not-found">
-          <h2>Post not found</h2>
-          <NuxtLink to="/blog">Return to Blog</NuxtLink>
-        </article>
+        <template v-else />
       </div>
     </div>
   </AppLayout>
@@ -45,11 +39,20 @@
 
 <script setup lang="ts">
 import { h } from 'vue'
+import { getImageUrl as getImageUrlUtil } from '~/utils/sanity'
+import { formatDate } from '~/utils/date'
 
 const route = useRoute()
 const slug = route.params.slug as string
 
 const { post, pending, error } = useSanityPost(slug)
+
+watch([post, pending, error], ([p, isPending, err]) => {
+  if (err || isPending) return
+  if (!p) {
+    throw createError({ statusCode: 404, statusMessage: 'Post Not Found' })
+  }
+}, { immediate: true })
 
 const serializers = {
   types: {
@@ -60,26 +63,16 @@ const serializers = {
   },
 }
 
-const imageUrl = computed(() => {
-  const img = post.value?.mainImage
-  if (img?.asset?.url) return img.asset.url
-  if (img && 'url' in img && typeof (img as { url?: string }).url === 'string') {
-    return (img as { url: string }).url
-  }
-  return null
-})
+const imageUrl = computed(() => post.value ? getImageUrlUtil(post.value) : null)
 
-function formatDate(dateStr?: string) {
-  if (!dateStr) return ''
-  return new Date(dateStr).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  })
-}
-
-useHead({
-  title: () => `${post.value?.title || 'Post'} | Blog`,
+const siteName = 'Blog'
+useSeoMeta({
+  title: () => `${post.value?.title || 'Post'} | ${siteName}`,
+  description: () => post.value?.excerpt || '',
+  ogTitle: () => post.value?.title || 'Post',
+  ogDescription: () => post.value?.excerpt || '',
+  ogImage: () => (post.value ? getImageUrlUtil(post.value) : undefined) || undefined,
+  twitterCard: 'summary_large_image',
 })
 </script>
 
@@ -100,28 +93,10 @@ useHead({
   }
 }
 
-.loading,
-.error,
-.not-found {
+.post-error {
   text-align: center;
   padding: vc(60) vc(20);
   color: $color-gray-600;
-}
-
-.loading__spinner {
-  width: vc(40);
-  height: vc(40);
-  border: vc(3) solid $color-gray-300;
-  border-top-color: $color-primary;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 0 auto vc(16);
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 .post {

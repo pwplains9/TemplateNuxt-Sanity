@@ -1,14 +1,12 @@
 <template>
   <template v-if="pending">
-    <div class="template-page__loading">
-      <div class="template-page__spinner" />
-      <p>Loading...</p>
-    </div>
+    <VLoadingSpinner message="Loading..." />
   </template>
 
   <template v-else-if="error">
     <div class="template-page__error">
       <p>Failed to load page.</p>
+      <button class="template-page__retry" @click="refresh">Try again</button>
     </div>
   </template>
 
@@ -16,11 +14,7 @@
     <PageBuilder :sections="page.pageBuilder" />
   </template>
 
-  <div v-else class="template-page__not-found">
-    <h1>Page not found</h1>
-    <p>This page doesn't exist or has no content.</p>
-    <NuxtLink to="/" class="template-page__link">Go to Home</NuxtLink>
-  </div>
+  <template v-else />
 </template>
 
 <script setup lang="ts">
@@ -28,11 +22,22 @@ const props = defineProps<{
   slug: string
 }>()
 
-const { page, pending, error } = useSanityPage(props.slug || '')
+const { page, pending, error, refresh } = useSanityPage(props.slug || '')
+
+watch([page, pending, error], ([p, isPending, err]) => {
+  if (err || isPending) return
+  if (!p || !p?.pageBuilder?.length) {
+    throw createError({ statusCode: 404, statusMessage: 'Page Not Found' })
+  }
+}, { immediate: true })
 
 useSeoMeta({
   title: () => page.value?.metadata?.title || page.value?.name || 'Page',
   description: () => page.value?.metadata?.description || '',
+  ogTitle: () => page.value?.metadata?.openGraph?.title || page.value?.metadata?.title || page.value?.name || 'Page',
+  ogDescription: () => page.value?.metadata?.openGraph?.description || page.value?.metadata?.description || '',
+  ogImage: () => page.value?.metadata?.openGraph?.image?.url || undefined,
+  twitterCard: 'summary_large_image',
 })
 
 useHead({
@@ -41,51 +46,26 @@ useHead({
 </script>
 
 <style scoped lang="scss">
-.template-page__loading,
-.template-page__error,
-.template-page__not-found {
+.template-page__error {
   max-width: vc(600);
   margin: 0 auto;
   padding: vc(60) vc(20);
   text-align: center;
+  color: $color-gray-600;
 }
 
-.template-page__spinner {
-  width: vc(40);
-  height: vc(40);
-  border: vc(3) solid $color-gray-300;
-  border-top-color: $color-primary;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 0 auto vc(16);
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.template-page__not-found {
-  h1 {
-    font-size: vc(24);
-    font-weight: 600;
-    margin-bottom: vc(8);
-  }
-
-  p {
-    color: $color-gray-600;
-    margin-bottom: vc(24);
-  }
-}
-
-.template-page__link {
+.template-page__retry {
+  margin-top: vc(16);
+  padding: vc(10) vc(20);
+  background: $color-primary;
+  color: white;
   font-weight: 500;
-  color: $color-primary;
-  text-decoration: none;
+  border-radius: vc(8);
+  cursor: pointer;
+  border: none;
 
   &:hover {
-    text-decoration: underline;
+    opacity: 0.9;
   }
 }
 </style>

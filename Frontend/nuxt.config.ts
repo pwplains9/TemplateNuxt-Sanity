@@ -17,17 +17,31 @@ export default defineNuxtConfig({
       const dataset = process.env.NUXT_PUBLIC_SANITY_DATASET || 'production'
       const apiVersion = process.env.NUXT_PUBLIC_SANITY_API_VERSION || '2024-01-01'
       if (!projectId) return
-      const query = '*[_type=="page" && defined(slug.current)]{ "slug": slug.current }'
-      const url = `https://${projectId}.api.sanity.io/v${apiVersion}/data/query/${dataset}?query=${encodeURIComponent(query)}`
+      nitroConfig.prerender = nitroConfig.prerender || {}
+      const baseUrl = `https://${projectId}.api.sanity.io/v${apiVersion}/data/query/${dataset}`
+
       try {
-        const data = (await globalThis.fetch(url).then((r) => r.json())) as { result?: { slug: string }[] }
-        const slugs = (data?.result || [])
+        const [pagesRes, postsRes] = await Promise.all([
+          globalThis.fetch(`${baseUrl}?query=${encodeURIComponent('*[_type=="page" && defined(slug.current)]{ "slug": slug.current }')}`).then((r) => r.json()),
+          globalThis.fetch(`${baseUrl}?query=${encodeURIComponent('*[_type=="post" && defined(slug.current)]{ "slug": slug.current }')}`).then((r) => r.json()),
+        ])
+
+        const pageSlugs = ((pagesRes as { result?: { slug: string }[] })?.result || [])
           .map((d) => d?.slug)
           .filter((s): s is string => Boolean(s) && s !== '/' && s !== 'index')
-        nitroConfig.prerender = nitroConfig.prerender || {}
-        nitroConfig.prerender.routes = [...(nitroConfig.prerender.routes || []), ...slugs.map((s) => `/${s}`)]
+
+        const postSlugs = ((postsRes as { result?: { slug: string }[] })?.result || [])
+          .map((d) => d?.slug)
+          .filter((s): s is string => Boolean(s))
+
+        const routes = [
+          ...(nitroConfig.prerender.routes || []),
+          ...pageSlugs.map((s) => `/${s}`),
+          ...postSlugs.map((s) => `/blog/${s}`),
+        ]
+        nitroConfig.prerender.routes = routes
       } catch (e) {
-        console.warn('[nuxt] Could not fetch Sanity pages for prerender:', e)
+        console.warn('[nuxt] Could not fetch Sanity routes for prerender:', e)
       }
     },
   },
@@ -41,17 +55,18 @@ export default defineNuxtConfig({
     useCdn: false,
   },
 
-  css: ['~/assets/css/styles/main.scss'],
+  css: ['~/assets/styles/main.scss'],
 
   vite: {
     css: {
       preprocessorOptions: {
         scss: {
-          additionalData: `
-            @import "@/assets/css/styles/_variables.scss";
-            @import "@/assets/css/styles/_functions.scss";
-            @import "@/assets/css/styles/_mixins.scss";
-          `,
+          loadPaths: ['assets/styles'],
+          additionalData: (source: string, ctx: { filename?: string }) => {
+            const path = ctx?.filename ?? ''
+            if (path.includes('assets/styles')) return source
+            return `@use "variables" as *;\n@use "functions" as *;\n@use "mixins" as *;\n${source}`
+          },
         },
       },
     },
@@ -60,6 +75,14 @@ export default defineNuxtConfig({
   app: {
     head: {
       title: 'Nuxt + Sanity Template',
+      link: [
+        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+        { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
+        {
+          rel: 'stylesheet',
+          href: 'https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap',
+        },
+      ],
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },

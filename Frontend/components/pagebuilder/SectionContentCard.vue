@@ -48,12 +48,6 @@ defineProps<{
   padding: vc(24) 0;
 }
 
-.container {
-  max-width: vc(1200);
-  margin: 0 auto;
-  padding: 0 vc(20);
-}
-
 .content-card {
   background: $color-gray-50;
   border-radius: vc(16);
