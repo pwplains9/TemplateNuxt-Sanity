@@ -1,6 +1,6 @@
 <template>
   <div class="page-builder">
-    <template v-for="section in sections" :key="section._key">
+    <template v-for="(section, index) in sectionsList" :key="section._key ?? `section-${index}`">
       <PagebuilderSectionContentHeading
         v-if="section._type === 'contentBlockHeading'"
         :section="section"
@@ -36,9 +36,18 @@
 <script setup lang="ts">
 import type { PageBuilderSection } from '~/types/sanity'
 
-defineProps<{
-  sections: PageBuilderSection[]
+const props = defineProps<{
+  sections: PageBuilderSection[] | unknown
 }>()
+
+const sectionsList = computed(() => {
+  const s = props.sections
+  if (Array.isArray(s)) return s as PageBuilderSection[]
+  if (s && typeof s === 'object' && Array.isArray((s as { pageBuilder?: unknown }).pageBuilder)) {
+    return (s as { pageBuilder: PageBuilderSection[] }).pageBuilder
+  }
+  return []
+})
 </script>
 
 <style scoped lang="scss">

@@ -52,8 +52,7 @@ export default defineConfig({
                   .defaultOrdering([{ field: 'publishedAt', direction: 'desc' }])
               ),
           ]),
-    ),
-    visionTool(),
+    }),
   ],
 
   schema: {

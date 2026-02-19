@@ -1,28 +1,43 @@
 <template>
-  <template v-if="pending">
-    <VLoadingSpinner message="Loading..." />
-  </template>
+  <ClientOnly>
+    <template v-if="pending">
+      <VLoadingSpinner message="Loading..." />
+    </template>
 
-  <template v-else-if="error">
-    <div class="template-page__error">
-      <p>Failed to load page.</p>
-      <button class="template-page__retry" @click="refresh">Try again</button>
-    </div>
-  </template>
+    <template v-else-if="error">
+      <div class="template-page__error">
+        <p>Failed to load page.</p>
+        <button class="template-page__retry" @click="() => refresh()">Try again</button>
+      </div>
+    </template>
 
-  <template v-else-if="page?.pageBuilder?.length">
-    <PageBuilder :sections="page.pageBuilder" />
-  </template>
+    <template v-else-if="page?.pageBuilder?.length">
+      <PageBuilder :sections="sectionsList" />
+    </template>
 
-  <template v-else />
+    <template v-else />
+
+    <template #fallback>
+      <VLoadingSpinner message="Loading..." />
+    </template>
+  </ClientOnly>
 </template>
 
 <script setup lang="ts">
+import PageBuilder from '~/components/pagebuilder/PageBuilder.vue'
+import VLoadingSpinner from '~/components/ui/VLoadingSpinner/VLoadingSpinner.vue'
+
 const props = defineProps<{
   slug: string
 }>()
 
 const { page, pending, error, refresh } = useSanityPage(props.slug || '')
+
+const sectionsList = computed(() => {
+  const p = page.value
+  const list = p?.pageBuilder
+  return Array.isArray(list) ? list : []
+})
 
 watch([page, pending, error], ([p, isPending, err]) => {
   if (err || isPending) return

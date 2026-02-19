@@ -49,6 +49,7 @@
 <script setup lang="ts">
 import VTitle from '~/components/ui/VTitle/VTitle.vue'
 import VText from '~/components/ui/VText/VText.vue'
+import VLoadingSpinner from '~/components/ui/VLoadingSpinner/VLoadingSpinner.vue'
 import { getImageUrl } from '~/utils/sanity'
 import { formatDate } from '~/utils/date'
 

@@ -39,6 +39,7 @@
 
 <script setup lang="ts">
 import { h } from 'vue'
+import VLoadingSpinner from '~/components/ui/VLoadingSpinner/VLoadingSpinner.vue'
 import { getImageUrl as getImageUrlUtil } from '~/utils/sanity'
 import { formatDate } from '~/utils/date'
 

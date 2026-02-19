@@ -17,6 +17,8 @@ const props = withDefaults(defineProps<Props>(), {
   size: 'md',
   disabled: false,
   fullWidth: false,
+  href: undefined,
+  to: undefined,
 })
 
 const componentTag = computed(() => {

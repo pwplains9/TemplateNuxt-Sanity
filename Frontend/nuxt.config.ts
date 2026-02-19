@@ -3,6 +3,10 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   ssr: true,
 
+  experimental: {
+    appManifest: false,
+  },
+
   nitro: {
     preset: 'static',
     prerender: {
@@ -48,16 +52,41 @@ export default defineNuxtConfig({
 
   modules: ['@nuxtjs/sanity', '@nuxt/eslint'],
 
+  runtimeConfig: {
+    public: {
+      sanity: {
+        projectId: process.env.NUXT_PUBLIC_SANITY_PROJECT_ID || '',
+        dataset: process.env.NUXT_PUBLIC_SANITY_DATASET || 'production',
+        apiVersion: '2024-01-01',
+        useCdn: false,
+      },
+    },
+  },
+
   sanity: {
     projectId: process.env.NUXT_PUBLIC_SANITY_PROJECT_ID || '',
     dataset: process.env.NUXT_PUBLIC_SANITY_DATASET || 'production',
     apiVersion: '2024-01-01',
     useCdn: false,
+    visualEditing: false,
   },
 
   css: ['~/assets/styles/main.scss'],
 
   vite: {
+    optimizeDeps: {
+      exclude: ['@sanity/visual-editing'],
+    },
+    build: {
+      rollupOptions: {
+        onwarn(warning, defaultHandler) {
+          if (warning.code === 'MODULE_LEVEL_DIRECTIVE' && warning.message?.includes('"use client"')) {
+            return
+          }
+          defaultHandler(warning)
+        },
+      },
+    },
     css: {
       preprocessorOptions: {
         scss: {

@@ -4,8 +4,7 @@ import type {
   SanitySiteSettings,
 } from '~/types/sanity'
 
-export const useSanityPage = (slug: string) => {
-  const query = `*[_type == "page" && slug.current == $slug][0]{
+const pageProjection = `{
     _id,
     _type,
     name,
@@ -70,7 +69,16 @@ export const useSanityPage = (slug: string) => {
     }
   }`
 
-  const { data: page, pending, error, refresh } = useSanityQuery<SanityPage>(query, { slug })
+export const useSanityPage = (slug: string) => {
+  const isHome = slug === '/' || slug === '' || slug === 'index'
+  const query = isHome
+    ? `*[_type == "page" && slug.current in ["/", "home", "index", ""]][0]${pageProjection}`
+    : `*[_type == "page" && slug.current == $slug][0]${pageProjection}`
+
+  const { data: page, pending, error, refresh } = useSanityQuery<SanityPage>(
+    query,
+    isHome ? {} : { slug },
+  )
 
   return { page, pending, error, refresh }
 }

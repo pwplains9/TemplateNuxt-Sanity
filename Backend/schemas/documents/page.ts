@@ -17,7 +17,7 @@ export const page = defineType({
       type: 'slug',
       options: { source: 'name', maxLength: 96 },
       validation: (Rule) => Rule.required(),
-      description: 'Use "/" for the home page.',
+      description: 'For the main page use "/" or "home". The site will show it on the homepage.',
     },
     {
       name: 'pageBuilder',
